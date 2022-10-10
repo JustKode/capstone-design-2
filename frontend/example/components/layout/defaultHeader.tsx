@@ -7,8 +7,9 @@ const MainContainer = styled.div`
   top: 0;
   left: 0;
   position: fixed;
-  z-index: -999;
+  z-index: 999;
   border-bottom: 1px solid #bbbbbb;
+  background-color: white;
 `
 
 const SubContainer = styled.div`
