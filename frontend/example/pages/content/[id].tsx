@@ -68,7 +68,7 @@ export default ({id}: ContentPageProps) => {
 
   const testContents = [1, 2, 3, 4, 5, 6].map(
     (x: number) => (
-      <Link href={`/content/${x}`}>
+      <Link href={`/content/${x}`} key={`content ${x}`}>
         <a>
           <TestContent
             title={`제목 ${x}`}
