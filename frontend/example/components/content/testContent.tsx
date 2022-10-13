@@ -1,5 +1,7 @@
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useState, useRef, useEffect } from "react"
+import VisibilitySensor from 'react-visibility-sensor'
 import styled from "styled-components"
+import { loggingViewtimeFunction } from "../function/componentFunction"
 
 
 const ContainerWrapper = styled.div`
@@ -50,20 +52,29 @@ interface ContentProps {
 }
 
 export default ({title, subTitle, content}: ContentProps) => {
+  const target = useRef(null)
+  const [isIntersecting, setIntersecting] = useState(false) 
+
+  const onChangeFunction = loggingViewtimeFunction(isIntersecting, setIntersecting, title, "userId", true)
+
   return (
-    <MainContainer>
-      <Content>
-        <ContentText>
-          {content}
-        </ContentText>
-      </Content>
-      <Title>
-        {title}
-      </Title>
-      <SubTitle>
-        {subTitle}
-      </SubTitle>
-    </MainContainer>
+    <VisibilitySensor
+      onChange={onChangeFunction}
+    >
+      <MainContainer>
+        <Content>
+          <ContentText>
+            {content}
+          </ContentText>
+        </Content>
+        <Title>
+          {title}
+        </Title>
+        <SubTitle>
+          {subTitle}
+        </SubTitle>
+      </MainContainer>
+    </VisibilitySensor>
   )
 }
 
