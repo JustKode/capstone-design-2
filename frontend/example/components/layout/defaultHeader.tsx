@@ -25,7 +25,19 @@ const Banner = styled.div`
   font-weight: 700;
   position: absolute;
   top: 50%;
+  left: 20px;
   transform: translateY(-50%);
+`
+
+const MenuContainer = styled.div`
+  line-height: 80px;
+  float: right;
+
+  & a {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px;
+  }
 `
 
 export default () => {
@@ -37,6 +49,13 @@ export default () => {
             <Banner>테스트용 배너</Banner>
           </a>
         </Link>
+        <MenuContainer>
+          <Link href="/login" passHref>
+            <a>
+              로그인
+            </a>
+          </Link>
+        </MenuContainer>
       </SubContainer>
     </MainContainer>
   )
