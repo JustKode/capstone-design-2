@@ -1,6 +1,7 @@
-import { PropsWithChildren, useState, useRef, useEffect } from "react"
+import { PropsWithChildren, useState, useRef, useEffect, useContext } from "react"
 import VisibilitySensor from 'react-visibility-sensor'
 import styled from "styled-components"
+import { LogContext } from "../../pages/_app"
 import { loggingOnMouseOverFunction, loggingOnMouseOutFunction, loggingViewtimeFunction } from "../function/componentFunction"
 
 
@@ -54,10 +55,11 @@ interface ContentProps {
 export default ({title, subTitle, content}: ContentProps) => {
   const target = useRef(null)
   const [isIntersecting, setIntersecting] = useState(false) 
+  const { addData } = useContext(LogContext)
 
-  const onChangeFunction = loggingViewtimeFunction(isIntersecting, setIntersecting, title, "userId", true)
-  const onMouseOverFunction = loggingOnMouseOverFunction(title, "userId", true)
-  const onMouseOutFunction = loggingOnMouseOutFunction(title, "userId", true)
+  const onChangeFunction = loggingViewtimeFunction(isIntersecting, setIntersecting, addData, title, "userId", true)
+  const onMouseOverFunction = loggingOnMouseOverFunction(title, "userId", addData, true)
+  const onMouseOutFunction = loggingOnMouseOutFunction(title, "userId", addData, true)
 
   return (
     <VisibilitySensor
