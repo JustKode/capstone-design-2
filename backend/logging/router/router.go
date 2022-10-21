@@ -9,4 +9,5 @@ import (
 func SetupRoutes(app *fiber.App) {
 	api := app.Group("/log", logger.New())
 	api.Post("/component", logging.PostComponentLoggingHandler)
+	api.Post("/page", logging.PostPageLoggingHandler)
 }

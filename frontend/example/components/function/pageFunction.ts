@@ -22,7 +22,7 @@ export const onPageRequestFactory = (cookieKey: string) => {
       return
     }
 
-    const response = await fetch(`${SERVER_URL}/log/pageRequest`, {
+    const response = await fetch(`${SERVER_URL}/log/page`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
