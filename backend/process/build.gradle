@@ -22,6 +22,7 @@ dependencies {
     testImplementation 'org.projectlombok:lombok:1.18.24'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
 
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
     implementation 'org.apache.kafka:kafka-clients:2.8.1'
     implementation 'org.msgpack:msgpack-core:0.9.3'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'

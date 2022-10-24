@@ -7,6 +7,7 @@ import org.msgpack.core.MessageUnpacker;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ToString

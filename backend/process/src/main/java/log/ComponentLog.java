@@ -2,10 +2,12 @@ package log;
 
 import lombok.*;
 import org.msgpack.core.MessagePack;
+import org.msgpack.core.MessageTypeException;
 import org.msgpack.core.MessageUnpacker;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @ToString
@@ -20,7 +22,7 @@ public class ComponentLog {
     private String actionType;
     private String objectId;
 
-    public static List<ComponentLog> unpackComponentLog(byte[] bytes) throws IOException {
+    public static List<ComponentLog> unpackComponentLog(byte[] bytes) throws IOException, MessageTypeException {
         List<ComponentLog> logs = new ArrayList<>();
         MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(bytes);
 
@@ -37,7 +39,7 @@ public class ComponentLog {
                     case "UserId":
                         tempLog.setUserId(unpacker.unpackString());
                         break;
-                    case "TimeStamp":
+                    case "Timestamp":
                         tempLog.setTimestamp(unpacker.unpackLong());
                         break;
                     case "Doing":
