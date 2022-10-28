@@ -20,8 +20,6 @@ interface ILogContext {
 
 export const LogContext = createContext<ILogContext>({})
 
-const sleep = delay => new Promise(resolve => setTimeout(resolve, delay));
-
 export default function App({ Component, pageProps }: AppProps) {
   const [data, setData] = useState<LogData[]>([])
   const savedCallback = useRef(null)
@@ -37,6 +35,10 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   const fetchFunction = async () => {
+    if (data.length === 0) {
+      return
+    }
+
     try {
       const response = await fetch(`${SERVER_URL}/log/component`, {
         method: "POST",
@@ -61,7 +63,7 @@ export default function App({ Component, pageProps }: AppProps) {
       savedCallback.current();
     }
 
-    let id = setInterval(tick, 1000);
+    let id = setInterval(tick, 5000);
     return () => clearInterval(id);
   }, [])
 

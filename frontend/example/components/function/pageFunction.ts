@@ -14,12 +14,11 @@ export const onPageRequestFactory = (cookieKey: string) => {
     const data = {
       basePath: pathname,
       userId: userId,
-      timeStamp: new Date().getTime()
+      timestamp: new Date().getTime()
     }
 
     if (debug) {
       console.log(data)
-      return
     }
 
     const response = await fetch(`${SERVER_URL}/log/page`, {
