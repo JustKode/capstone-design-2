@@ -5,6 +5,7 @@ import (
 	"capstone/logging/router"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
 	"os"
 	"os/signal"
@@ -14,6 +15,7 @@ import (
 func main() {
 	app := fiber.New()
 	router.SetupRoutes(app)
+	app.Use(cors.New(cors.Config{}))
 
 	go func() {
 		if err := app.Listen(":8000"); err != nil {

@@ -36,7 +36,7 @@ func PostComponentLoggingHandler(c *fiber.Ctx) error {
 }
 
 func PostPageLoggingHandler(c *fiber.Ctx) error {
-	logs := new([]PageLog)
+	logs := new(PageLog)
 
 	if err := c.BodyParser(logs); err != nil {
 		return err
