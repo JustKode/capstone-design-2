@@ -12,7 +12,6 @@ import org.msgpack.core.MessageTypeException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import static consumer.KafkaConfig.getConsumerProperties;
@@ -35,7 +34,7 @@ public class PageLogConsumerWorker implements Runnable {
                 ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, byte[]> record: records) {
                     try {
-                        List<PageLog> logs = PageLog.unpackPageLog(record.value());
+                        PageLog logs = PageLog.unpackPageLog(record.value());
                         log.info(logs.toString());
                     } catch (IOException | MessageTypeException e) {
                         log.error("Parse Error: " + e.getMessage());

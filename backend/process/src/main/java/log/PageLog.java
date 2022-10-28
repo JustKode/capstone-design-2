@@ -20,36 +20,30 @@ public class PageLog {
     private Long timestamp;
     private String userId;
 
-    public static List<PageLog> unpackPageLog(byte[] bytes) throws IOException {
-        List<PageLog> logs = new ArrayList<>();
+    public static PageLog unpackPageLog(byte[] bytes) throws IOException {
         MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(bytes);
 
-        int arrayLength = unpacker.unpackArrayHeader();
+        int mapLength = unpacker.unpackMapHeader();
+        PageLog tempLog = new PageLog();
 
-        for (int i = 0; i < arrayLength; i++) {
-            int mapLength = unpacker.unpackMapHeader();
-            PageLog tempLog = new PageLog();
+        for (int j = 0; j < mapLength; j++) {
+            String key = unpacker.unpackString();
 
-            for (int j = 0; j < mapLength; j++) {
-                String key = unpacker.unpackString();
-
-                switch (key) {
-                    case "Pathname":
-                        tempLog.setPathname(unpacker.unpackString());
-                        break;
-                    case "Timestamp":
-                        tempLog.setTimestamp(unpacker.unpackLong());
-                        break;
-                    case "UserId":
-                        tempLog.setUserId(unpacker.unpackString());
-                        break;
-                    default:
-                        break;
-                }
+            switch (key) {
+                case "Pathname":
+                    tempLog.setPathname(unpacker.unpackString());
+                    break;
+                case "Timestamp":
+                    tempLog.setTimestamp(unpacker.unpackLong());
+                    break;
+                case "UserId":
+                    tempLog.setUserId(unpacker.unpackString());
+                    break;
+                default:
+                    break;
             }
-
-            logs.add(tempLog);
         }
-        return logs;
+
+        return tempLog;
     }
 }
