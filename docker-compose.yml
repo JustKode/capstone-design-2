@@ -15,3 +15,41 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6379  # 실제 배포시 비밀번호 사용
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "6379:6379"
+  elasticsearch:
+    container_name: elasticsearch
+    image: elasticsearch:7.17.4
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - default
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - TZ=Asia/Seoul
+    user: root
+    restart: always
+    privileged: true
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.13.0
+    ports:
+      - 5601:5601
+    networks:
+      - default
+    environment:
+      ELASTICSERCH_UTL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      TZ: Asia/Seoul
+    restart: always
+    privileged: true
+networks:
+  elastic:
