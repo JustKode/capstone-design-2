@@ -8,9 +8,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.msgpack.core.MessageTypeException;
+import util.LogProcessUtil;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -33,17 +35,26 @@ public class ComponentLogConsumerWorker implements Runnable {
         try {
             while (!Thread.interrupted()) {
                 ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(100));
+
+                if (records.isEmpty()) {
+                    Thread.sleep(1000);
+                    continue;
+                }
+
+                List<ComponentLog> logs = new ArrayList<>();
                 for (ConsumerRecord<String, byte[]> record: records) {
                     try {
-                        List<ComponentLog> logs = ComponentLog.unpackComponentLog(record.value());
-                        log.info(logs.toString());
+                        logs.addAll(ComponentLog.unpackComponentLog(record.value()));
                     } catch (IOException | MessageTypeException e) {
                         log.error("Parse Error: " + e.getMessage());
                     }
                 }
-                consumer.commitSync();
+
+                if (LogProcessUtil.processComponentLog(logs)) {
+                    consumer.commitSync();
+                }
             }
-        } catch (WakeupException e) {
+        } catch (WakeupException | InterruptedException e) {
             log.info(Thread.currentThread().getName() + " trigger WakeupException");
         } finally {
             consumer.close();

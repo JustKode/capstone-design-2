@@ -60,4 +60,8 @@ public class ComponentLog {
         }
         return logs;
     }
+
+    public String getComponentLogID() {
+        return "componentLog__" + this.userId + "__" + this.objectId + "__" + this.actionType;
+    }
 }

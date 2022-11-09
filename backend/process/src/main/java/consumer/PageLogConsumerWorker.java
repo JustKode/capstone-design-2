@@ -7,11 +7,13 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
-import org.msgpack.core.MessageTypeException;
+import util.LogProcessUtil;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import static consumer.KafkaConfig.getConsumerProperties;
@@ -32,17 +34,26 @@ public class PageLogConsumerWorker implements Runnable {
         try {
             while (!Thread.interrupted()) {
                 ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(100));
+
+                if (records.isEmpty()) {
+                    Thread.sleep(1000);
+                    continue;
+                }
+
+                List<PageLog> pageLogList = new ArrayList<>();
                 for (ConsumerRecord<String, byte[]> record: records) {
                     try {
-                        PageLog logs = PageLog.unpackPageLog(record.value());
-                        log.info(logs.toString());
-                    } catch (IOException | MessageTypeException e) {
-                        log.error("Parse Error: " + e.getMessage());
+                        pageLogList.add(PageLog.unpackPageLog(record.value()));
+                    } catch (IOException e) {
+                        log.error("Error in parse PageLog.");
                     }
                 }
-                consumer.commitSync();
+
+                if (LogProcessUtil.processPageLog(pageLogList)) {
+                    consumer.commitSync();
+                }
             }
-        } catch (WakeupException e) {
+        } catch (WakeupException | InterruptedException e) {
             log.info(Thread.currentThread().getName() + " trigger WakeupException");
         } finally {
             consumer.close();

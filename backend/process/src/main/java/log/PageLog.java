@@ -46,4 +46,8 @@ public class PageLog {
 
         return tempLog;
     }
+
+    public String getPageLogID() {
+        return this.userId + " " + this.pathname;
+    }
 }
