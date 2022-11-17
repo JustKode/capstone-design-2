@@ -1,8 +1,7 @@
 package main
 
 import (
-	"capstone/logging/producer"
-	"capstone/logging/router"
+	"dashboard/router"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,11 +13,11 @@ import (
 
 func main() {
 	app := fiber.New()
-	app.Use(cors.New(cors.Config{}))
+	app.Use(cors.New())
 	router.SetupRoutes(app)
 
 	go func() {
-		if err := app.Listen(":8000"); err != nil {
+		if err := app.Listen(":8001"); err != nil {
 			log.Panic(err)
 		}
 	}()
@@ -30,6 +29,5 @@ func main() {
 	println("Gracefully shutting down...")
 	_ = app.Shutdown()
 
-	producer.Client.Close()
 	fmt.Println("Fiber was successful shutdown.")
 }

@@ -9,7 +9,7 @@ const MainContainer = styled.div`
   height: 1000px;
 `
 
-export default function Home() {
+export default function Component() {
   return (
     <DefaultLayout air>
       <Head>

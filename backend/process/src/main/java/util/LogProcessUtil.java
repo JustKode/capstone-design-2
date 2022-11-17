@@ -3,6 +3,7 @@ package util;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch.core.BulkRequest;
 import co.elastic.clients.elasticsearch.core.BulkResponse;
+import config.Config;
 import io.lettuce.core.KeyValue;
 import io.lettuce.core.Value;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -24,7 +25,7 @@ public class LogProcessUtil {
         // 유저 최신 접속 URL 가져오기
         List<KeyValue<String, String>> keyValueList = commands.mget(
                 pageLogs.stream()
-                        .map(PageLog::getPageLogID)
+                        .map(PageLog::getUserId)
                         .distinct()
                         .toArray(String[]::new)
         );
@@ -45,7 +46,7 @@ public class LogProcessUtil {
                             script -> script.inline(
                                 s -> s.source("ctx._source.count += 1")
                             )
-                        ).upsert(Map.of("count", 1, "userId", pageLog.getUserId()))
+                        ).upsert(Map.of("count", 1, "userId", pageLog.getUserId(), "path", pageLog.getPathname()))
                     )
                 )
             );
@@ -54,20 +55,20 @@ public class LogProcessUtil {
             if (beforeMap.containsKey(pageLog.getUserId())) {
                 br.operations(op -> op
                     .update(idx -> idx
-                        .index("page_log")
+                        .index("page_move_log")
                         .id(pageLog.getUserId() + " " + beforeMap.get(pageLog.getUserId()) + " " + pageLog.getPathname())
                         .action(action -> action.script(
                                 script -> script.inline(
                                     s -> s.source("ctx._source.count += 1")
                                 )
-                            ).upsert(Map.of("count", 1, "userId", pageLog.getUserId()))
+                            ).upsert(Map.of("count", 1, "userId", pageLog.getUserId(), "source", beforeMap.get(pageLog.getUserId()), "target", pageLog.getPathname()))
                         )
                     )
                 );
             }
 
             // redis
-            beforeMap.put(pageLog.getPageLogID(), pageLog.getPathname());
+            beforeMap.put(pageLog.getUserId(), pageLog.getPathname());
         }
 
         try {
@@ -108,28 +109,32 @@ public class LogProcessUtil {
                 Long endTimestamp = componentLog.getTimestamp();
                 Long time = endTimestamp - startTimestamp;
 
-                br.operations(op -> op
-                    .update(
-                        idx -> idx
-                            .index("component_log")
-                            .id(componentLog.getComponentLogID())
-                            .action(action -> action.script(
-                                    script -> script.inline(
-                                            s -> s.source("ctx._source.time += " + time)
-                                    )
-                                ).upsert(Map.of("time", time, "userId", componentLog.getUserId()))
-                            )
+                if (time <= Config.MAX_REACT_TIME) {
+                    br.operations(op -> op
+                        .update(
+                            idx -> idx
+                                .index("component_log")
+                                .id(componentLog.getComponentLogID())
+                                .action(action -> action.script(
+                                        script -> script.inline(
+                                                s -> s.source("ctx._source.time += " + time)
+                                        )
+                                    ).upsert(Map.of(
+                                        "time", time,
+                                        "userId", componentLog.getUserId(),
+                                        "objectId", componentLog.getObjectId(),
+                                        "actionType", componentLog.getActionType()
+                                    ))
+                                )
                         )
                     );
+                    flag = true;
+                }
 
                 beforeMap.remove(componentLog.getComponentLogID());
             } else if (componentLog.getDoing() && !beforeMap.containsKey(componentLog.getComponentLogID())) {
                 beforeMap.put(componentLog.getComponentLogID(), String.valueOf(componentLog.getTimestamp()));
-            } else {
-                continue;
             }
-
-            flag = true;
         }
 
         try {

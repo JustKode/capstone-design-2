@@ -30,7 +30,7 @@ public class PageLog {
             String key = unpacker.unpackString();
 
             switch (key) {
-                case "Pathname":
+                case "BasePath":
                     tempLog.setPathname(unpacker.unpackString());
                     break;
                 case "Timestamp":

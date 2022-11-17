@@ -44,12 +44,15 @@ export default () => {
   return (
     <MainContainer>
       <SubContainer>
-        <Link href="/" passHref>
+        <Link href="/page" passHref>
           <Banner>DashBoard</Banner>
         </Link>
         <MenuContainer>
-          <Link href="/" passHref>
-            메인
+          <Link href="/page" passHref>
+            페이지
+          </Link>
+          <Link href="/component" passHref>
+            컴포넌트
           </Link>
         </MenuContainer>
       </SubContainer>
