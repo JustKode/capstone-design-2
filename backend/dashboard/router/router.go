@@ -10,4 +10,5 @@ func SetupRoutes(app *fiber.App) {
 	api := app.Group("/dashboard", logger.New())
 	api.Get("/page", dashboard.GetPageGraph)
 	api.Get("/component", dashboard.GetComponentReactTime)
+	api.Get("/componentScore", dashboard.GetComponentReactScore)
 }

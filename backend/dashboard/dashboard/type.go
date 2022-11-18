@@ -22,6 +22,11 @@ type ComponentType struct {
 	ActionType string `json:"actionType"`
 }
 
+type ComponentScoreType struct {
+	Score    float64 `json:"score"`
+	ObjectId string  `json:"objectId"`
+}
+
 type PageLogResult struct {
 	Nodes []NodeType `json:"nodes"`
 	Links []LinkType `json:"links"`
