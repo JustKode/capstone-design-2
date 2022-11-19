@@ -115,7 +115,7 @@ func GetComponentReactScore(c *fiber.Ctx) error {
 			}
 		}
 
-		score = math.Log(score)
+		score = math.Log2(score)
 
 		results = append(results, ComponentScoreType{
 			Score:    score,

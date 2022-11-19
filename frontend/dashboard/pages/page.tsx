@@ -1,9 +1,10 @@
 import Head from 'next/head'
 import { useState } from 'react'
 import styled from 'styled-components'
-import Graph, { NodeType, LinkType } from '../components/dashboard/graph'
+import Graph, { NodeType, LinkType } from '../components/dashboard/nodeGraph'
 import { DASHBOARD_SERVER } from '../env/server'
 import DefaultLayout from '../layouts/defaultLayout'
+import PageInfo from '../components/dashboard/pageInfo'
 
 
 const MainContainer = styled.div`
@@ -38,6 +39,12 @@ const UserIdButton = styled.button`
   border-radius: 8px;
 `
 
+const InfoContainer = styled.div`
+  width: 100%;
+  max-width: 1080px;
+  margin: auto;
+`
+
 export default function Page() {
   const [userId, setUserId] = useState("")
   const [searchId, setSearchId] = useState("")
@@ -53,10 +60,14 @@ export default function Page() {
     const response = await fetch(DASHBOARD_SERVER + "/dashboard/page?userId=" + userId)
     const result = await response.json()
     
+    result.nodes.sort((a, b) => b.value - a.value)
+
     setLinks(result.links)
     setNodes(result.nodes)
     setSearchId(userId)
   }
+
+  const componentInfoNode = links.map(x => <PageInfo key={`${x.source} -> ${x.target}`} {...x}/>)
 
   return (
     <DefaultLayout air>
@@ -81,6 +92,9 @@ export default function Page() {
           nodes={nodes}
           links={links}
         />
+        <InfoContainer>
+          {componentInfoNode}
+        </InfoContainer>
       </MainContainer>
     </DefaultLayout>
   )
