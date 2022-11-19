@@ -128,6 +128,8 @@ export default function ({nodes, links}: NodeGraphProps) {
           .attr("y2", function(d){ return (d.target as any).y; });
       node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     });
+
+    svg.node()
   }, [nodes, links])
 
   return (

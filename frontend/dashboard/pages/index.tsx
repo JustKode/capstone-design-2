@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import styled from 'styled-components'
-import Graph from '../components/dashboard/graph'
+import Graph from '../components/dashboard/nodeGraph'
 import DefaultLayout from '../layouts/defaultLayout'
 
 
