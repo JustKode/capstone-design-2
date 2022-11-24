@@ -12,7 +12,7 @@ var ElasticSearchClient *elasticSearch.Client
 func init() {
 	cfg := elasticSearch.Config{
 		Addresses: []string{
-			"http://elasticsearch:9200",
+			"http://localhost:9200",
 		},
 	}
 
