@@ -6,4 +6,5 @@ public class Config {
     public static String ES_IP = "localhost";
     public static Integer ES_PORT = 9200;
     public static Long MAX_REACT_TIME = 60000L;
+    public static String BOOTSTRAP_SERVER = "localhost:9092";
 }
